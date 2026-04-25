@@ -4,6 +4,9 @@ import base64
 import sqlite3
 import cv2
 import numpy as np
+import bidi.algorithm
+import bidi
+bidi.get_display = bidi.algorithm.get_display
 import easyocr
 from flask import Flask, request, render_template, flash, redirect, url_for, jsonify
 
