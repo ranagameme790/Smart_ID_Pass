@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart ID Pass - PNU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #CCFBF1 0%, #F3F4F6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(15, 118, 110, 0.15);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #0F766E;
+            padding-bottom: 15px;
+        }
+        
+        .logo {
+            max-width: 80px;
+            height: auto;
+            margin: 0 auto 15px auto;
+            display: block;
+        }
+        
+        h1 {
+            color: #0F766E;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: #1F2937;
+            font-size: 14px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            color: #DC2626;
+            border-left: 4px solid #DC2626;
+        }
+        
+        .alert-success {
+            background: #dcfce7;
+            color: #16A34A;
+            border-left: 4px solid #16A34A;
+        }
+        
+        .alert-info {
+            background: #e0f2fe;
+            color: #0F766E;
+            border-left: 4px solid #0F766E;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-weight: 700;
+            color: #0F766E;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .video-container {
+            position: relative;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+            aspect-ratio: 4 / 3;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+        
+        .video-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #0F766E;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #115E59;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(15, 118, 110, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #F3F4F6;
+            color: #1F2937;
+            border: 2px solid #E5E7EB;
+        }
+        
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+        
+        .btn-success {
+            background: #16A34A;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(22, 163, 74, 0.3);
+        }
+        
+        .btn-success:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-box {
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #F9FAFB;
+            text-align: center;
+            padding: 10px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .preview-box img {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .preview-label {
+            font-size: 12px;
+            color: #9CA3AF;
+            font-weight: 600;
+        }
+        
+        .preview-status {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        
+        .status-ok {
+            color: #16A34A;
+        }
+        
+        .status-pending {
+            color: #F59E0B;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0F766E;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: #F9FAFB;
+            border-radius: 10px;
+            border-left: 4px solid #0F766E;
+        }
+        
+        .result-message {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            font-size: 14px;
+            color: #1F2937;
+        }
+        
+        .permission-message {
+            text-align: center;
+            padding: 20px;
+            background: #e0f2fe;
+            border-radius: 10px;
+            color: #0F766E;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            button {
+                font-size: 13px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="static/PNU Icon.png" alt="PNU Logo" class="logo">
+            <h1>Smart ID Pass</h1>
+            <p class="subtitle">Open the camera to begin verification</p>
+        </div>
+        
+        <div id="alertContainer"></div>
+        
+        <!-- Camera Permission Message -->
+        <div id="permissionMessage" class="permission-message" style="display: none;">
+           Check camera permissions and refresh the page
+        </div>
+        
+        <!-- Camera Section -->
+        <div class="section" id="cameraSection" style="display: none;">
+            <div class="section-title">📹 Capture Your Photo</div>
+            
+            <div class="video-container">
+                <video id="webcam" autoplay playsinline></video>
+            </div>
+            
+            <div class="video-controls">
+                <button class="btn-primary" onclick="captureID()">
+                    Capture ID
+                </button>
+                <button class="btn-primary" onclick="captureFace()">
+                    Take Selfie
+                </button>
+            </div>
+            
+            <!-- Image Preview -->
+            <div class="preview-grid">
+                <div class="preview-box">
+                    <div class="preview-label">Capture ID</div>
+                    <div id="idPreview" class="preview-status status-pending">⏳</div>
+                    <img id="idImage" style="display: none;">
+                </div>
+                <div class="preview-box">
+                    <div class="preview-label">Take Selfie</div>
+                    <div id="facePreview" class="preview-status status-pending">⏳</div>
+                    <img id="faceImage" style="display: none;">
+                </div>
+            </div>
+            
+            <button class="btn-success" onclick="verifyIdentity()" id="verifyBtn" disabled>
+                ✓ Verify Now
+            </button>
+        </div>
+        
+        <!-- Result -->
+        <div id="resultContainer" style="display: none;">
+            <div class="result-box">
+                <div class="result-message" id="resultMessage"></div>
+                <div class="result-details" id="resultDetails"></div>
+            </div>
+            <button class="btn-secondary" onclick="resetCapture()" style="width: 100%; margin-top: 15px;">
+                🔄 Try Again
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Global variables
+        let videoStream = null;
+        let idImageBase64 = null;
+        let faceImageBase64 = null;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Initialize camera on page load
+        async function initializeCamera() {
+            const permissionMessage = document.getElementById('permissionMessage');
+            const cameraSection = document.getElementById('cameraSection');
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showAlert('❌ Browser does not support webcam access.', 'error');
+                permissionMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                const video = document.getElementById('webcam');
+
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    },
+                    audio: false
+                });
+
+                video.srcObject = videoStream;
+                cameraSection.style.display = 'block';
+                permissionMessage.style.display = 'none';
+
+                // Reset variables
+                resetCapture();
+
+            } catch (err) {
+                showAlert('❌ Cannot access camera. Please grant permission.', 'error');
+                permissionMessage.style.display = 'block';
+                console.error('Webcam error:', err);
+            }
+        }
+        
+        // Capture ID photo
+        function captureID() {
+            captureFrame((base64) => {
+                idImageBase64 = base64;
+                const img = document.getElementById('idImage');
+                img.src = base64;
+                img.style.display = 'block';
+                document.getElementById('idPreview').innerHTML = '✅';
+                document.getElementById('idPreview').className = 'preview-status status-ok';
+                checkBothCaptured();
+            });
+        }
+        
+        // Capture selfie
+        function captureFace() {
+            captureFrame((base64) => {
+                faceImageBase64 = base64;
+                const img = document.getElementById('faceImage');
+                img.src = base64;
+                img.style.display = 'block';
+                document.getElementById('facePreview').innerHTML = '✅';
+                document.getElementById('facePreview').className = 'preview-status status-ok';
+                checkBothCaptured();
+            });
+        }
+        
+        // Capture frame from video
+        function captureFrame(callback) {
+            const video = document.getElementById('webcam');
+            const width = video.videoWidth;
+            const height = video.videoHeight;
+            
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(video, 0, 0, width, height);
+            
+            canvas.toBlob((blob) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    callback(reader.result);
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg', 0.9);
+        }
+        
+        // Check if both photos are captured
+        function checkBothCaptured() {
+            const verifyBtn = document.getElementById('verifyBtn');
+            if (idImageBase64 && faceImageBase64) {
+                verifyBtn.disabled = false;
+            }
+        }
+        
+        // Verify identity
+        async function verifyIdentity() {
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<span class="spinner"></span> Verifying...';
+            
+            try {
+                const response = await fetch('/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_image: idImageBase64,
+                        face_image: faceImageBase64
+                    })
+                });
+                
+                const data = await response.json().catch(() => null);
+                if (!response.ok || !data) {
+                    const message = data && data.message ? data.message : 'Server error occurred.';
+                    throw new Error(message);
+                }
+                
+                document.getElementById('cameraSection').style.display = 'none';
+                document.getElementById('resultContainer').style.display = 'block';
+                
+                const messageElement = document.getElementById('resultMessage');
+                const detailsElement = document.getElementById('resultDetails');
+                
+                if (data.success || data.access_granted) {
+                    messageElement.innerHTML = '✅ Verification Successful';
+                    messageElement.style.color = '#16A34A';
+                    detailsElement.innerHTML = `
+                        <strong>Result:</strong> ${data.result}<br>
+                        <strong>Confidence:</strong> ${data.confidence}%
+                    `;
+                    showAlert('✅ Identity verified successfully', 'success');
+                } else {
+                    messageElement.innerHTML = '❌ Verification Failed';
+                    messageElement.style.color = '#DC2626';
+                    detailsElement.innerHTML = `
+                        <strong>Reason:</strong> ${data.result}<br>
+                        <strong>Message:</strong> ${data.message}
+                    `;
+                    showAlert('❌ ' + (data.message || 'Verification failed'), 'error');
+                }
+                
+            } catch (err) {
+                showAlert('❌ Connection error: ' + err.message, 'error');
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '✓ Verify Now';
+                console.error('Verification error:', err);
+            }
+        }
+        
+        // Reset capture
+        function resetCapture() {
+            idImageBase64 = null;
+            faceImageBase64 = null;
+            
+            document.getElementById('idImage').style.display = 'none';
+            document.getElementById('faceImage').style.display = 'none';
+            document.getElementById('idPreview').innerHTML = '⏳';
+            document.getElementById('facePreview').innerHTML = '⏳';
+            document.getElementById('idPreview').className = 'preview-status status-pending';
+            document.getElementById('facePreview').className = 'preview-status status-pending';
+            
+            document.getElementById('verifyBtn').disabled = true;
+            document.getElementById('verifyBtn').innerHTML = '✓ Verify Now';
+            
+            document.getElementById('cameraSection').style.display = 'block';
+            document.getElementById('resultContainer').style.display = 'none';
+        }
+        
+        // Show alerts
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 4000);
+            }
+        }
+        
+        function applyConfidenceWidths() {
+            document.querySelectorAll('.confidence-fill[data-width]').forEach((el) => {
+                const width = Number(el.dataset.width) || 0;
+                el.style.width = width + '%';
+            });
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initializeCamera();
+            applyConfidenceWidths();
+        });
+        
+        // Stop camera on page close
+        window.addEventListener('beforeunload', () => {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
